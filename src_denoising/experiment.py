@@ -18,6 +18,7 @@ import preprocess
 import utils
 
 import models.n3net as n3net
+from dataset import DeepLesionDataset as Dataset
 
 class Experiment:
     def __init__(self, args):
@@ -47,51 +48,49 @@ class Experiment:
         return net
 
     def create_test_dataloaders(self):
-        transform_test = transforms.Compose([
-            img_dataset.ToGrayscale(),
-            transforms.ToTensor(),
-        ])
+        # transform_test = transforms.Compose([
+        #     img_dataset.ToGrayscale(),
+        #     transforms.ToTensor(),
+        # ])
 
-        testsets = [
-            (img_dataset.PlainImageFolder(root=denoising_data.set12_val_dir, transform=transform_test, cache=True), "Set12"),
-            (img_dataset.PlainImageFolder(root=denoising_data.bsds500_val68_dir, transform=transform_test, cache=True), "val68"),
-            (img_dataset.PlainImageFolder(root=denoising_data.urban_val_dir, transform=transform_test, cache=True), "Urban100")
-         ]
+        testsets = [Dataset(root='/data/pacole2/DeepLesionTestPreprocessed/miniStudies/', crop_size=None)]
         testloaders = [(torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False, num_workers=1), name)
                       for testset,name in testsets]
 
         return testloaders
 
     def create_train_dataloaders(self, patchsize, batchsize, trainsetiters):
-        transform_train = transforms.Compose([
-            transforms.RandomCrop(patchsize),
-            preprocess.RandomOrientation90(),
-            transforms.RandomVerticalFlip(),
-            img_dataset.ToGrayscale(),
-            transforms.ToTensor(),
-        ])
+        # transform_train = transforms.Compose([
+        #     transforms.RandomCrop(patchsize),
+        #     preprocess.RandomOrientation90(),
+        #     transforms.RandomVerticalFlip(),
+        #     img_dataset.ToGrayscale(),
+        #     transforms.ToTensor(),
+        # ])
         self.batchsize=batchsize
 
-        train_folders = [
-            denoising_data.bsds500_train_dir,
-            denoising_data.bsds500_test_dir
-        ]
+        # train_folders = [
+        #     denoising_data.bsds500_train_dir,
+        #     denoising_data.bsds500_test_dir
+        # ]
 
-        trainset = img_dataset.PlainImageFolder(root=train_folders, transform=transform_train, cache=True)
-        trainset = torch.utils.data.ConcatDataset([trainset]*trainsetiters)
+        # trainset = img_dataset.PlainImageFolder(root=train_folders, transform=transform_train, cache=True)
+        patch = self.args.patchsize
+        trainset = Dataset(root='/data/pacole2/DeepLesionPreprocessed/miniStudies/', crop_size=(patch, patch))
+        # trainset = torch.utils.data.ConcatDataset([trainset]*trainsetiters)
         trainloader = torch.utils.data.DataLoader(trainset, batch_size=batchsize,
                                                   shuffle=True, num_workers=20)
 
         return trainloader
 
-    def data_preprocessing(self, input):
-        args = self.args
-        sigma = args.sigma / 255.0
-        noise = torch.zeros_like(input)
-        noise.normal_(0, 1)
-        noise *= sigma
-        noisy = input + noise
-        return noisy, input
+    # def data_preprocessing(self, input):
+    #     args = self.args
+    #     sigma = args.sigma / 255.0
+    #     noise = torch.zeros_like(input)
+    #     noise.normal_(0, 1)
+    #     noise *= sigma
+    #     noisy = input + noise
+    #     return noisy, input
 
     def create_loss(self):
         args = self.args

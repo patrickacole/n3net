@@ -18,11 +18,9 @@ import metrics
 from progressbar import progress_bar
 import utils
 
-base_expdir = "../results_gaussian_denoising/"
+base_expdir = "../results_deeplesion_denoising/"
 
-parser = argparse.ArgumentParser(description='N3Net for Gaussian image denoising')
-
-parser.add_argument("--sigma", type=float, default=25) # standard deviation of input noise
+parser = argparse.ArgumentParser(description='N3Net for Deep Lesion image denoising')
 
 # DnCNN
 utils.add_commandline_networkparams(parser, "dncnn", 64, 6, 3, "relu", True) # Specification of DnCNNs: features, depth, kernelsize, activation, batchnorm
@@ -67,7 +65,7 @@ parser.add_argument('--eval_epoch', type=int)
 parser.add_argument('--suffix', default="")
 
 # Training options
-parser.add_argument("--batchsize", type=int, default=32)
+parser.add_argument("--batchsize", type=int, default=64)
 parser.add_argument("--patchsize", type=int, default=80)
 parser.add_argument("--trainsetiters", type=int, default=128)
 
@@ -179,15 +177,17 @@ def train_epoch(experiment):
     stats = get_stats()
 
     trainloader = experiment.trainloader
-    for batch_idx, inputs in enumerate(trainloader):
+    for batch_idx, input_set in enumerate(trainloader):
         experiment.epoch_frac = float(batch_idx) / len(trainloader)
         experiment.step = epoch*len(trainloader) + batch_idx
         experiment.iter = batch_idx
+        inputs, targets = input_set
         if use_cuda:
             inputs = inputs.cuda()
+            targets = targets.cuda()
         optimizer.zero_grad()
-        inputs, targets = experiment.data_preprocessing(inputs)
-        inputs, targets = Variable(inputs, requires_grad=False), Variable(targets, requires_grad=False)
+        # inputs, targets = experiment.data_preprocessing(inputs)
+        # inputs, targets = Variable(inputs, requires_grad=False), Variable(targets, requires_grad=False)
 
         pred = net(inputs)
         batch_loss = criterion(pred, targets)
