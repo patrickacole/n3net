@@ -106,14 +106,16 @@ def test_epoch(epoch, experiment):
         for testloader, testname in testloaders:
             stats = get_stats()
             print("Testing on {}".format(testname))
-            for batch_idx, inputs in enumerate(testloader):
+            for batch_idx, input_set in enumerate(testloader):
                 experiment.step = epoch*len(experiment.trainloader) + int(batch_idx/len(testloader)*len(experiment.trainloader))
                 experiment.iter = batch_idx
                 torch.cuda.empty_cache()
+                inputs, targets = input_set
                 if use_cuda:
                     inputs = inputs.cuda()
-                inputs, targets = experiment.data_preprocessing(inputs)
-                inputs, targets = Variable(inputs, requires_grad=False), Variable(targets, requires_grad=False)
+                    targets = targets.cuda()
+                # inputs, targets = experiment.data_preprocessing(inputs)
+                # inputs, targets = Variable(inputs, requires_grad=False), Variable(targets, requires_grad=False)
                 pred = net(inputs)
                 batch_loss = criterion(pred, targets)
                 loss = batch_loss.mean()
