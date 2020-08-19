@@ -53,7 +53,7 @@ class Experiment:
         #     transforms.ToTensor(),
         # ])
 
-        testsets = [Dataset(root='/data/pacole2/DeepLesionTestPreprocessed/miniStudies/', crop_size=None)]
+        testsets = [Dataset(root='/home/pacole2/Projects/datasets/DeepLesionTestPreprocessed/miniStudies/', crop_size=None)]
         testloaders = [(torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False, num_workers=1), name)
                       for testset,name in testsets]
 
@@ -76,7 +76,7 @@ class Experiment:
 
         # trainset = img_dataset.PlainImageFolder(root=train_folders, transform=transform_train, cache=True)
         patch = self.args.patchsize
-        trainset = Dataset(root='/data/pacole2/DeepLesionPreprocessed/miniStudies/', crop_size=(patch, patch))
+        trainset = Dataset(root='/home/pacole2/Projects/datasets/DeepLesionPreprocessed/miniStudies/', crop_size=(patch, patch))
         # trainset = torch.utils.data.ConcatDataset([trainset]*trainsetiters)
         trainloader = torch.utils.data.DataLoader(trainset, batch_size=batchsize,
                                                   shuffle=True, num_workers=20)
