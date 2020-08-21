@@ -13,6 +13,9 @@ import pickle
 import torch
 from torch.autograd import Variable
 
+import numpy as np
+from PIL import Image
+
 import experiment
 import metrics
 from progressbar import progress_bar
@@ -131,7 +134,7 @@ def test_epoch(epoch, experiment):
 
                 # save predicted image
                 learned_img = Image.fromarray((255 * pred[0,0].cpu().data.numpy()).astype(np.uint8))
-                filename = os.path.join('./n3net-results', testsets[i].at(batch_idx).split('/home/pacole2/Projects/datasets/DeepLesionTestPreprocessed/miniStudies/')[1])
+                filename = os.path.join('./n3net-results', testsets[0][i].at(batch_idx).split('/home/pacole2/Projects/datasets/DeepLesionTestPreprocessed/miniStudies/')[1])
                 directory = os.path.dirname(filename)
                 if not os.path.exists(directory):
                     os.makedirs(directory)

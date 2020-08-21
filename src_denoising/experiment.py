@@ -53,7 +53,7 @@ class Experiment:
         #     transforms.ToTensor(),
         # ])
 
-        testsets = [Dataset(root='/home/pacole2/Projects/datasets/DeepLesionTestPreprocessed/miniStudies/', crop_size=None)]
+        testsets = [(Dataset(root='/home/pacole2/Projects/datasets/DeepLesionTestPreprocessed/miniStudies/', crop_size=None), 'Deep Lesion Zip File 56')]
         testloaders = [(torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False, num_workers=1), name)
                       for testset,name in testsets]
 
