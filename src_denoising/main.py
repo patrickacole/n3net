@@ -93,7 +93,7 @@ def get_stats():
     return stats
 
 def test_epoch(epoch, experiment):
-    testloaders = experiment.create_test_dataloaders()
+    testloaders, testsets = experiment.create_test_dataloaders()
     use_cuda = experiment.use_cuda
     net = experiment.net
     summaries = experiment.summaries
@@ -103,7 +103,7 @@ def test_epoch(epoch, experiment):
     utils.set_random_seeds(1234)
 
     with torch.no_grad():
-        for testloader, testname in testloaders:
+        for i, (testloader, testname) in enumerate(testloaders):
             stats = get_stats()
             print("Testing on {}".format(testname))
             for batch_idx, input_set in enumerate(testloader):
@@ -128,6 +128,14 @@ def test_epoch(epoch, experiment):
 
                 progress_bar(batch_idx, len(testloader), 'Loss: %.5f | PSNR: %.2f | SSIM: %.3f'
                     % (stats["loss"].avg, stats["psnr"].avg, stats["ssim"].avg))
+
+                # save predicted image
+                learned_img = Image.fromarray((255 * pred[0,0].cpu().data.numpy()).astype(np.uint8))
+                filename = os.path.join('./n3net-results', testsets[i].at(batch_idx).split('/home/pacole2/Projects/datasets/DeepLesionTestPreprocessed/miniStudies/')[1])
+                directory = os.path.dirname(filename)
+                if not os.path.exists(directory):
+                    os.makedirs(directory)
+                learned_img.save(os.path.join(filename))
 
                 del pred, inputs, targets
 

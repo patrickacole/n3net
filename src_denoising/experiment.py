@@ -57,7 +57,7 @@ class Experiment:
         testloaders = [(torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False, num_workers=1), name)
                       for testset,name in testsets]
 
-        return testloaders
+        return testloaders, testsets
 
     def create_train_dataloaders(self, patchsize, batchsize, trainsetiters):
         # transform_train = transforms.Compose([
