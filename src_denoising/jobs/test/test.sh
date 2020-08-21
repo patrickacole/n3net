@@ -29,4 +29,4 @@ fi
 # Data is ready now run python file
 cd ~/Projects/n3net/src_denoising/
 echo "Running python script now"
-python -u main.py # add other arguments
+python -u main.py --eval --eval_epoch 51 --evaldir /home/pacole2/Projects/n3net/results_deeplesion_denoising/0009-/ # add other arguments
