@@ -119,7 +119,7 @@ def test_epoch(epoch, experiment):
                     targets = targets.cuda()
                 # inputs, targets = experiment.data_preprocessing(inputs)
                 # inputs, targets = Variable(inputs, requires_grad=False), Variable(targets, requires_grad=False)
-                pred = net(inputs)
+                pred = torch.clamp(net(inputs), 0.0, 1.0)
                 batch_loss = criterion(pred, targets)
                 loss = batch_loss.mean()
                 stats["loss"].update(loss.data)
